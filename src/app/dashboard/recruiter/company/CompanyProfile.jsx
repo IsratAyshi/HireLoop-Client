@@ -260,7 +260,11 @@ export default function CompanyProfile({ recruiter, recruiterCompany }) {
                                     <ListBox.Item id="technology" className={listItemClasses} textValue="Technology">Technology</ListBox.Item>
                                     <ListBox.Item id="design" className={listItemClasses} textValue="Design">Design</ListBox.Item>
                                     <ListBox.Item id="marketing" className={listItemClasses} textValue="Marketing">Marketing</ListBox.Item>
-                                    <ListBox.Item id="finance" className={listItemClasses} textValue="Finance">Finance</ListBox.Item>
+                                    <ListBox.Item id="entertainment" className={listItemClasses} textValue="Entertainment">Entertainment</ListBox.Item>
+                                    <ListBox.Item id="socialMedia" className={listItemClasses} textValue="Social Media">Social Media</ListBox.Item>
+                                    <ListBox.Item id="ecommerce" className={listItemClasses} textValue="E-commerce">E-commerce</ListBox.Item>
+                                    <ListBox.Item id="travel" className={listItemClasses} textValue="Travel">Travel</ListBox.Item>
+                                    <ListBox.Item id="automotive" className={listItemClasses} textValue="Automotive">Automotive</ListBox.Item>
                                 </ListBox>
                             </Select.Popover>
                         </Select>
