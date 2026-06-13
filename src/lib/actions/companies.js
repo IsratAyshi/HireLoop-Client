@@ -1,11 +1,21 @@
 'use server'
 
+import { revalidatePath } from "next/cache";
 import { serverMutation } from "../core/server";
 
 export const createCompany = async (newCompanyData) => {
     return serverMutation('/api/companies', newCompanyData);
 }
 
+
+export const updateCompany = async (id, data) => {
+    const reesult = serverMutation(`/api/companies/${id}`, data, 'PATCH');
+
+    // ekhane revalidatePath korte parbo as eta server component
+    revalidatePath('/dashboard/admin/companies');
+
+    return reesult;
+} // we need to pass PATCH as method param, because serverMutation has default method as POST
 
 
 

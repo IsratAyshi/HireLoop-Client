@@ -106,7 +106,7 @@ export default function PostJobPage({ company }) {
                     <div className="mt-4 inline-flex items-center gap-2 bg-zinc-900/50 border border-zinc-800 rounded-lg px-3 py-1.5 text-xs text-zinc-400">
                         <Briefcase size={14} className="text-zinc-500" />
                         Posting as: <span className="font-semibold text-zinc-300">{company.name}</span>
-                        <span className={`${company.status === "Approved" ? "text-emerald-500 bg-emerald-950/30" : "text-yellow-500 bg-yellow-950/30"} font-medium px-1.5 py-0.5 rounded border border-emerald-900/50`}>{company.status}</span>
+                        <span className={`${company.status === "Approved" ? "text-emerald-500 bg-emerald-950/30" : company.status === "Rejected" ? "text-red-500 bg-red-950/30" : "text-yellow-500 bg-yellow-950/30"} font-medium px-1.5 py-0.5 rounded border border-emerald-900/50`}>{company?.status || "Pending"}</span>
                     </div>
                 </div>
 
@@ -115,8 +115,7 @@ export default function PostJobPage({ company }) {
                     <div className="border-b border-zinc-800 pb-6 mb-8">
                         <div className="inline-flex items-center gap-2 bg-zinc-900/50 border border-zinc-800 rounded-lg px-3 py-1.5 text-sm text-zinc-400">
                             <WarningIcon size={16} className="text-zinc-500" />
-                            Company profile is not approved yet.
-                            Please wait for approval.
+                            Company profile is not approved yet/ is rejected. Please wait for approval.
                         </div>
                     </div>
                 }

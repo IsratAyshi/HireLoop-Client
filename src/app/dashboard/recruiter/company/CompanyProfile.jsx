@@ -191,7 +191,7 @@ export default function CompanyProfile({ recruiter, recruiterCompany }) {
                             <div className="flex items-center gap-3">
                                 <h1 className="text-2xl font-bold text-white">{company.name}</h1>
                                 <span className={`text-xs px-2.5 py-1 rounded-full font-medium border ${getStatusStyles(company.status)}`}>
-                                    {company.status}
+                                    {company?.status || 'Pending'}
                                 </span>
                             </div>
                             <a href={company.websiteUrl} target="_blank" rel="noreferrer" className="text-sm text-zinc-400 hover:underline flex items-center gap-1 mt-1">
