@@ -66,6 +66,7 @@ const CompanyTable = ({ companies }) => {
                             <Table.Column className="text-neutral-400 font-medium pb-4 border-b border-neutral-800">
                                 Industry
                             </Table.Column>
+
                             <Table.Column className="text-neutral-400 font-medium pb-4 border-b border-neutral-800">
                                 Jobs Count
                             </Table.Column>
@@ -110,6 +111,7 @@ const CompanyTable = ({ companies }) => {
                                                 {company.industry}
                                             </span>
                                         </Table.Cell>
+
                                         {/* Jobs Count Pill */}
                                         <Table.Cell className="py-4 align-middle">
                                             <span className="px-3 py-1 bg-neutral-800/60 text-neutral-400 rounded-full text-xs capitalize">
