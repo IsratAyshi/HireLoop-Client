@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { auth } from "../auth";
 import { getUserToken } from "./session";
 
@@ -15,8 +16,9 @@ export const authHeader = async () => {
 
 export const serverFetch = async (path) => {
     const res = await fetch(`${baseUrl}${path}`);
-    // handle 401, 404, 403
-    return res.json();
+    
+    // handle 401
+    return handleStatusCode(res);
 }
 
 export const protectedFetch = async(path) =>{
@@ -26,7 +28,7 @@ export const protectedFetch = async(path) =>{
 
 
     // handle 401, 404, 403
-    return res.json();
+    return handleStatusCode(res);
 }
 
 export const serverMutation = async (path, data, method = 'POST') => {
@@ -45,8 +47,33 @@ export const serverMutation = async (path, data, method = 'POST') => {
     // if (!text) {
     //     throw new Error('Empty response from server');
     // }
-    // handle 401, 404, 403
     // if (!res.ok) throw new Error(res.statusText);
+
+    // handle 401, 404, 403
+    console.log('Status code:', res.status);
+
+    if (res.status === 401) {
+        redirect('/auth/signin');
+    }
+    else if (res.status === 403) {
+        redirect('/unauthorized'); // forbidden 403 page hobe
+    }
+
+    return handleStatusCode(res);
+}
+
+
+// handle 401, 404, 403
+const handleStatusCode = (res) => {
+    if (res.status === 401) {
+        redirect('/unauthorized');
+    }
+    else if (res.status === 403) {
+        redirect('/forbidden'); 
+    }
+    // else if (res.status === 404) {
+    //     redirect('/not-found');
+    // }
 
     return res.json();
 }
