@@ -1,30 +1,67 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import JobCard from "@/components/jobs/JobCard";
 import JobFilters from "@/components/jobs/JobFilters";
+import { useRouter } from "next/navigation";
 
-export default function JobListingContainer({ initialJobs }) {
-    const [searchQuery, setSearchQuery] = useState("");
-    const [selectedType, setSelectedType] = useState("all");
-    const [selectedCategory, setSelectedCategory] = useState("all");
-    const [isRemoteOnly, setIsRemoteOnly] = useState(false);
+// export default function JobListingContainer({ initialJobs }) {
+export default function JobListingContainer({ jobs, filters }) {
+    // const [searchQuery, setSearchQuery] = useState("");
+    // const [selectedType, setSelectedType] = useState("all");
+    // const [selectedCategory, setSelectedCategory] = useState("all");
+    // const [isRemoteOnly, setIsRemoteOnly] = useState(false);
+    const [searchQuery, setSearchQuery] = useState(filters.search || "");
+    const [selectedType, setSelectedType] = useState(filters.jobType || "all");
+    const [selectedCategory, setSelectedCategory] = useState(filters.jobCategory || "all");
+    const [isRemoteOnly, setIsRemoteOnly] = useState(filters.isRemote || false);
 
-    // Compute matched filter rows instantly
-    const filteredJobs = useMemo(() => {
-        return initialJobs.filter((job) => {
-            const matchesSearch =
-                job.jobTitle?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                job.companyName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                job.requirements?.toLowerCase().includes(searchQuery.toLowerCase());
 
-            const matchesType = selectedType === "all" || job.jobType === selectedType;
-            const matchesCategory = selectedCategory === "all" || job.jobCategory === selectedCategory;
-            const matchesRemote = !isRemoteOnly || job.isRemote === true;
+    // Compute matched filter rows instantly by using useMemo, keeping filter results in memory
+    // const filteredJobs = useMemo(() => {
+    //     // return initialJobs.filter((job) => {
+    //     return jobs.filter((job) => {
+    //         const matchesSearch =
+    //             job.jobTitle?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    //             job.companyName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    //             job.requirements?.toLowerCase().includes(searchQuery.toLowerCase());
 
-            return matchesSearch && matchesType && matchesCategory && matchesRemote;
-        });
-    }, [searchQuery, selectedType, selectedCategory, isRemoteOnly, initialJobs]);
+    //         const matchesType = selectedType === "all" || job.jobType === selectedType;
+    //         const matchesCategory = selectedCategory === "all" || job.jobCategory === selectedCategory;
+    //         const matchesRemote = !isRemoteOnly || job.isRemote === true;
+
+    //         return matchesSearch && matchesType && matchesCategory && matchesRemote;
+    //     });
+    // }, [searchQuery, selectedType, selectedCategory, isRemoteOnly, jobs]);
+
+
+    const router = useRouter();
+
+    // Do the filtering on the server, use URL search params and useEffect
+    useEffect(() => {
+        const sp = new URLSearchParams();
+
+        if (searchQuery) {
+            sp.set('search', searchQuery);
+        }
+        if (selectedType !== "all") {
+            sp.set('jobType', selectedType);
+        };
+        if (selectedCategory != "all") {
+            sp.set('jobCategory', selectedCategory);
+        }
+        if (isRemoteOnly) {
+            sp.set('isRemote', true);
+        }
+
+
+        console.log('search params', sp.toString());
+
+        // now set the path for a sharable URL
+        const path = `?${sp.toString()}`; // more than one thakle auto & add hoye jabe because of toString
+        router.push(path);
+
+    }, [router, searchQuery, selectedType, selectedCategory, isRemoteOnly]);
 
     return (
         <>
@@ -40,12 +77,15 @@ export default function JobListingContainer({ initialJobs }) {
             />
 
             <div className="max-w-7xl mx-auto mb-6 text-sm text-zinc-500">
-                Showing {filteredJobs.length} position{filteredJobs.length !== 1 && "s"}
+                {/* Showing {filteredJobs.length} position{filteredJobs.length !== 1 && "s"} */}
+                Showing {jobs.length} position{jobs.length !== 1 && "s"}
             </div>
 
-            {filteredJobs.length > 0 ? (
+            {/* {filteredJobs.length > 0 ? ( */}
+            {jobs.length > 0 ? (
                 <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
-                    {filteredJobs.map((jobItem) => (
+                    {/* {filteredJobs.map((jobItem) => ( */}
+                    {jobs.map((jobItem) => (
                         <JobCard
                             key={jobItem._id?.$oid || jobItem._id}
                             job={jobItem}
