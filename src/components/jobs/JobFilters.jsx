@@ -62,6 +62,9 @@ export default function JobFilters({
                                 <ListBox.Item id="part-time" className="flex items-center justify-between text-zinc-200 hover:bg-purple-600 hover:text-white rounded-lg px-3 py-2 text-sm cursor-pointer capitalize">
                                     <span>Part-time</span>
                                 </ListBox.Item>
+                                <ListBox.Item id="internship" className="flex items-center justify-between text-zinc-200 hover:bg-purple-600 hover:text-white rounded-lg px-3 py-2 text-sm cursor-pointer capitalize">
+                                    <span>Internship</span>
+                                </ListBox.Item>
                                 <ListBox.Item id="contract" className="flex items-center justify-between text-zinc-200 hover:bg-purple-600 hover:text-white rounded-lg px-3 py-2 text-sm cursor-pointer capitalize">
                                     <span>Contract</span>
                                 </ListBox.Item>

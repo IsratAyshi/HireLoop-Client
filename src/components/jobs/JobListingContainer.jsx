@@ -4,9 +4,10 @@ import React, { useState, useMemo, useEffect } from "react";
 import JobCard from "@/components/jobs/JobCard";
 import JobFilters from "@/components/jobs/JobFilters";
 import { useRouter } from "next/navigation";
+import { Pagination } from "@heroui/react";
 
 // export default function JobListingContainer({ initialJobs }) {
-export default function JobListingContainer({ jobs, filters }) {
+export default function JobListingContainer({ jobs, filters, total }) {
     // const [searchQuery, setSearchQuery] = useState("");
     // const [selectedType, setSelectedType] = useState("all");
     // const [selectedCategory, setSelectedCategory] = useState("all");
@@ -15,6 +16,7 @@ export default function JobListingContainer({ jobs, filters }) {
     const [selectedType, setSelectedType] = useState(filters.jobType || "all");
     const [selectedCategory, setSelectedCategory] = useState(filters.jobCategory || "all");
     const [isRemoteOnly, setIsRemoteOnly] = useState(filters.isRemote || false);
+    const [page, setPage] = useState(filters.page || 1);
 
 
     // Compute matched filter rows instantly by using useMemo, keeping filter results in memory
@@ -37,6 +39,47 @@ export default function JobListingContainer({ jobs, filters }) {
 
     const router = useRouter();
 
+
+    // const totalItems = jobs.length;
+    const totalItems = total;
+    const itemsPerPage = 12;
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+
+    // const getPageNumbers = () => {
+    //     // const pages = [1, 2, 3, 4, 5, 6, 7, 8];
+    //     const pages = [...Array(totalPages).keys()];
+    //     return pages;
+
+    // }
+
+    const getPageNumbers = () => {
+        // const pages = [];
+        // pages.push(1);
+
+        if (totalPages <= 1) {
+            return [1];
+        }
+        const pages = [1];
+
+        if (page > 3) {
+            pages.push("ellipsis");
+        }
+        const start = Math.max(2, page - 1);
+        const end = Math.min(totalPages - 1, page + 1);
+        for (let i = start; i <= end; i++) {
+            pages.push(i);
+        }
+        if (page < totalPages - 2) {
+            pages.push("ellipsis");
+        }
+        pages.push(totalPages);
+        return pages;
+    };
+
+    const startItem = (page - 1) * itemsPerPage + 1;
+    const endItem = Math.min(page * itemsPerPage, totalItems);
+
     // Do the filtering on the server, use URL search params and useEffect
     useEffect(() => {
         const sp = new URLSearchParams();
@@ -53,6 +96,9 @@ export default function JobListingContainer({ jobs, filters }) {
         if (isRemoteOnly) {
             sp.set('isRemote', true);
         }
+        if (page) {
+            sp.set('page', page);
+        }
 
 
         console.log('search params', sp.toString());
@@ -61,7 +107,7 @@ export default function JobListingContainer({ jobs, filters }) {
         const path = `?${sp.toString()}`; // more than one thakle auto & add hoye jabe because of toString
         router.push(path);
 
-    }, [router, searchQuery, selectedType, selectedCategory, isRemoteOnly]);
+    }, [router, searchQuery, selectedType, selectedCategory, isRemoteOnly, page]);
 
     return (
         <>
@@ -83,20 +129,58 @@ export default function JobListingContainer({ jobs, filters }) {
 
             {/* {filteredJobs.length > 0 ? ( */}
             {jobs.length > 0 ? (
-                <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
-                    {/* {filteredJobs.map((jobItem) => ( */}
-                    {jobs.map((jobItem) => (
-                        <JobCard
-                            key={jobItem._id?.$oid || jobItem._id}
-                            job={jobItem}
-                        />
-                    ))}
-                </div>
+                <>
+                    <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
+                        {/* {filteredJobs.map((jobItem) => ( */}
+                        {jobs.map((jobItem) => (
+                            <JobCard
+                                key={jobItem._id?.$oid || jobItem._id}
+                                job={jobItem}
+                            />
+                        ))}
+                    </div>
+
+                </>
             ) : (
                 <div className="text-center py-20 border border-dashed border-zinc-800 rounded-[32px] max-w-7xl mx-auto">
                     <p className="text-zinc-500 text-lg">No positions match your search criteria.</p>
                 </div>
             )}
+
+            <Pagination className="w-full">
+                <Pagination.Summary>
+                    Showing {startItem}-{endItem} of {totalItems} results
+                </Pagination.Summary>
+                <Pagination.Content>
+                    <Pagination.Item>
+                        {/* <Pagination.Previous isDisabled={page === 1} onPress={() => setPage((p) => p - 1)}> */}
+                        <Pagination.Previous isDisabled={page === 1} onPress={() => setPage((p) => Math.max(1, p - 1))}>
+                            <Pagination.PreviousIcon />
+                            <span>Previous</span>
+                        </Pagination.Previous>
+                    </Pagination.Item>
+                    {getPageNumbers().map((p, i) =>
+                        p === "ellipsis" ? (
+                            <Pagination.Item key={`ellipsis-${i}`}>
+                                <Pagination.Ellipsis />
+                            </Pagination.Item>
+                        ) : (
+                            <Pagination.Item key={p}>
+                                <Pagination.Link isActive={p === page} onPress={() => setPage(p)}>
+                                    {p}
+                                </Pagination.Link>
+                            </Pagination.Item>
+                        ),
+                    )}
+                    <Pagination.Item>
+                        {/* <Pagination.Next isDisabled={page === totalPages} onPress={() => setPage((p) => p + 1)}> */}
+                        <Pagination.Next isDisabled={page === totalPages} onPress={() => setPage((p) => Math.min(totalPages, p + 1))}>
+                            <span>Next</span>
+                            <Pagination.NextIcon />
+                        </Pagination.Next>
+                    </Pagination.Item>
+                </Pagination.Content>
+            </Pagination>
         </>
     );
 }
